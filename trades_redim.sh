@@ -4,7 +4,12 @@
 # along time and symbol axes. First, let's make an indexed categorical variable
 # for the various stock symbols in the data:
 iquery -naq "load_library('cu')"
-iquery -naq "store(uniq(sort(cu(project(trades_flat,symbol)))), tkr)"
+iquery -naq "
+store(
+  cast(
+    uniq(sort(cu(project(trades_flat,symbol)))),
+    <symbol:string> [symbol_index=0:*,1000000,0]),
+  tkr)"
 
 # Count the number of unique symbols:
 iquery -aq "op_count(tkr)"

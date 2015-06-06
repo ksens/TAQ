@@ -2,12 +2,6 @@
 #
 # SciDB Examples using NYSE TAQ daily trades data
 #
-# Illustrated here:
-#  Efficiently loading files with the load_tools plugin
-#  Parsing fixed-length strings with substr
-#  Categorizing values with index_lookup
-#  Redimensioning along time and symbol into a sparse array
-#  Building bars from asynchronous time stamps
 iquery -aq "load_library('load_tools')"
 
 # We obtain one day of NYSE TAQ trades with (uncomment to download):
