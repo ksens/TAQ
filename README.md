@@ -129,3 +129,9 @@ iquery -aq "$x" | head
 ```
 
 If you want, you can examine the actual query in the last example with `echo $x`. It's pretty complicated.
+See the detailed comments in the `last_value_join.sh` file itself for help on how the query works.
+
+
+## Bar-building
+
+See detailed comments and examples in the trades_bars.sh script.
