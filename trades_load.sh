@@ -32,10 +32,12 @@ store(
                     int64(substr(a0,2,2))*60000 +
                     int64(substr(a0,4,2))*1000 +
                     int64(substr(a0,6,3)),
+                exchange, substr(a0,9,1),
                 symbol, trim(substr(a0,10,16)),
                 volume, int64(substr(a0,30,9)),
                 price, double(substr(a0,39,7)) +
                        double(substr(a0,46,4))/1000,
+                condition, substr(a0,26,4),
                 sequence_number, int64(substr(a0,53,16))
-    ), ms, symbol, volume, price, sequence_number),
+    ), ms, symbol, volume, price, exchange, condition, sequence_number),
   trades_flat)"

@@ -27,6 +27,8 @@ store(
                     int64(substr(a0,2,2))*60000 +
                     int64(substr(a0,4,2))*1000 +
                     int64(substr(a0,6,3)),
+                exchange, substr(a0,9,1),
+                condition, substr(a0,62,1),
                 symbol, trim(substr(a0,10,16)),
                 bid_size, int64(substr(a0,37,7)),
                 bid_price, double(substr(a0,26,7)) +

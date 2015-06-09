@@ -9,10 +9,10 @@ iquery -naq "
 store(
   redimension(
     index_lookup(quotes_flat as A,tkr, A.symbol, symbol_index),
-    <ask_price:double null, ask_size:int64 null, bid_price:double null, bid_size:int64 null, sequence_number: int64 null>
-    [symbol_index=0:*,10,0, ms=0:86399999,86400000,0]),
+    <ask_price:double null, ask_size:int64 null, bid_price:double null, bid_size:int64 null, sequence_number: int64 null, condition:string null, exchange: string null>
+    [dummy=0:999,1000,0, symbol_index=0:*,10,0, ms=0:86399999,86400000,0]),
   quotes
-)"
+)" || exit 1
 
 # Clean up
 iquery -aq "remove(quotes_flat)"
