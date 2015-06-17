@@ -30,7 +30,7 @@ x="redimension($1, <ask_price:double null, bid_price:double null, sequence_numbe
 # get the smaller array's attribute schema:
 smaller=$(echo $2 | sed -e "s/'/\\\\'/g")
 attrs="<$(iquery -aq "show('filter($smaller,true)','afl')" | tail -n 1 | cut -d '<' -f 2 | cut -d '>' -f 1)>"
-y="redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price)"
+y="redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0])"
 
 # (alternative)
 #x="$1"   # bigger array
