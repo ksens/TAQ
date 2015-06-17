@@ -24,18 +24,18 @@
 # than symbol_index and ms. We cache these into temporary arrays.
 #
 # Redimension the bigger quotes array (first argument)
-iquery -naq "remove(_x)" 2>/dev/null
-iquery -naq "create TEMP array _x <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]"
-iquery -naq "store(redimension($1, <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price), _x)"
+iquery -naq "remove(_x)" >/dev/null 2>&1
+iquery -naq "create TEMP array _x <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]" >/dev/null 2>&1
+iquery -naq "store(redimension($1, <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price), _x)" >/dev/null 2>&1
 x="_x"
 
 # Redimension the smaller array
 # get the smaller array's attribute schema:
 smaller=$(echo $2 | sed -e "s/'/\\\\'/g")
 attrs="<$(iquery -aq "show('filter($smaller,true)','afl')" | tail -n 1 | cut -d '<' -f 2 | cut -d '>' -f 1)>"
-iquery -naq "remove(_y)" 2>/dev/null
-iquery -naq "create TEMP array _y ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]"
-iquery -naq "store(redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]), _y)"
+iquery -naq "remove(_y)" >/dev/null 2>&1
+iquery -naq "create TEMP array _y ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]" >/dev/null 2>&1
+iquery -naq "store(redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]), _y)" >/dev/null 2>&1
 y="_y"
 
 # (alternative if arrays don't have any extra dimensions)

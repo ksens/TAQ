@@ -107,11 +107,14 @@ iquery -aq "op_count($x)"
 ## {0} 
 
 
-# Note that it matches the trades array expression count
-iquery -aq "op_count(between_trades(null,615,0, null,615,null)"
+# This matches the count of the number of unique time elements for this
+# instrument in the trades array:
+
+iquery -aq "op_count(uniq(sort(cu(project(apply(between(trades,null,615,null,null,615,null), time, string(ms)),time)))))" 
 
 ## {i} count
-## {0} 6337
+## {0} 4362
+
 
 # Show just part of the result
 iquery -aq "$x" | head
