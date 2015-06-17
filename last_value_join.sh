@@ -25,8 +25,8 @@
 #
 # Redimension the bigger quotes array (first argument)
 iquery -naq "remove(_x)" >/dev/null 2>&1
-iquery -naq "create TEMP array _x <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]" >/dev/null 2>&1
-iquery -naq "store(redimension($1, <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price), _x)" >/dev/null 2>&1
+iquery -naq "create TEMP array _x <ask_price:double null, bid_price:double null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]" >/dev/null 2>&1
+iquery -naq "store(redimension($1, <ask_price:double null, bid_price:double null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price), _x)" >/dev/null 2>&1
 x="_x"
 
 # Redimension the smaller array
