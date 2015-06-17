@@ -95,7 +95,10 @@ The syntax is
 and the script returns a _query_ which you can then run.
 
 Here is an example that joins trades and quotes for 'BAM'. We use the fact
-that we know the symbol index for BAM is 615 from the last example.
+that we know the symbol index for BAM is 615 from the last example. It takes
+a short while to generate the query for this example because a few temporary
+arrays that aggregate out the dummy dimension are generated (see the comments
+in the script).
 
 ```
 x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)")
@@ -104,7 +107,7 @@ x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(t
 iquery -aq "op_count($x)"
 
 ## {i} count
-## {0} 
+## {0} 4362
 
 
 # This matches the count of the number of unique time elements for this
@@ -119,22 +122,14 @@ iquery -aq "op_count(uniq(sort(cu(project(apply(between(trades,null,615,null,nul
 # Show just part of the result
 iquery -aq "$x" | head
 
-## {symbol_index,ms} ask_price,ask_size,bid_price,bid_size,sequence_number,price,volume,sequence_number
-## {615,34185171} 41.6,6,37.8,3,300537,38.9,91,3309
-## {615,34185172} 41.6,6,37.8,3,300537,39,100,3310
-## {615,34185173} 41.6,6,37.8,3,300537,38.8,91,3312
-## {615,34185950} 42,1,37.8,3,300938,38.8,9,3313
-## {615,34200381} 40.1,1,37,1,305290,39.8,9761,3695
-## {615,34200429} 40.1,1,39.2,3,305901,39.2,100,3742
-## {615,34201201} 40.1,1,38.6,1,309302,38.9,100,3899
-## {615,34201215} 40.1,1,38.4,1,309342,38.8,100,3906
-## {615,34201216} 40.1,1,38.4,1,309342,38.8,100,3907
+## {symbol_index,ms} ask_price,bid_price,sequence_number,price,volume,sequence_number,condition,exchange
+## {615,34185171} 41.6,37.8,300537,38.9,91,3309,'  TI','P'
+## {615,34185172} 41.6,37.8,300537,39,100,3310,' FT ','T'
+## {615,34185173} 41.6,37.8,300537,38.8,91,3312,'  TI','T'
+## {615,34185950} 42,37.8,300938,38.8,9,3313,'  TI','T'
+## {615,34200381} 40.1,37,305290,39.8,9761,3695,'O   ','N'
+## {615,34200429} 40.1,39.2,305901,39.2,100,3742,' F  ','N'
+## {615,34201201} 40.1,38.6,309302,38.9,100,3899,' F  ','Y'
+## {615,34201215} 40.1,38.4,309342,38.8,100,3906,'Q   ','P'
+## {615,34201216} 40.1,38.4,309342,38.8,100,3907,' F  ','P'
 ```
-
-If you want, you can examine the actual query in the last example with `echo $x`. It's pretty complicated.
-See the detailed comments in the `last_value_join.sh` file itself for help on how the query works.
-
-
-## Bar-building
-
-See detailed comments and examples in the trades_bars.sh script.
