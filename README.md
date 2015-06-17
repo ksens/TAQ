@@ -82,59 +82,6 @@ op_count(
 ## {0} 6337
 ```
 
-## Inexact time join with last-value imputation
-
-The `last_value_join.sh` script generates an example query that joins trade
-data with quote data. At time points where quote data is not available, the
-last known value is looked up and filled in. This is sometimes called an
-'as.of' join or 'last value carry forward' join.
-
-The syntax is
-```
-./last_value_join.sh  "quote array or expression"  "trade array or expression"
-```
-and the script returns a _query_ which you can then run.
-
-Here is an example that joins trades and quotes for 'BAM'. We use the fact
-that we know the symbol index for BAM is 615 from the last example. It takes
-a short while to generate the query for this example because a few temporary
-arrays that aggregate out the dummy dimension are generated (see the comments
-in the script).
-
-```
-x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)")
-
-# Count the result
-iquery -aq "op_count($x)"
-
-## {i} count
-## {0} 4362
-
-
-# This matches the count of the number of unique time elements for this
-# instrument in the trades array:
-
-iquery -aq "op_count(uniq(sort(cu(project(apply(between(trades,null,615,null,null,615,null), time, string(ms)),time)))))" 
-
-## {i} count
-## {0} 4362
-
-
-# Show just part of the result
-iquery -aq "$x" | head
-
-## {symbol_index,ms} ask_price,bid_price,sequence_number,price,volume,sequence_number,condition,exchange
-## {615,34185171} 41.6,37.8,300537,38.9,91,3309,'  TI','P'
-## {615,34185172} 41.6,37.8,300537,39,100,3310,' FT ','T'
-## {615,34185173} 41.6,37.8,300537,38.8,91,3312,'  TI','T'
-## {615,34185950} 42,37.8,300938,38.8,9,3313,'  TI','T'
-## {615,34200381} 40.1,37,305290,39.8,9761,3695,'O   ','N'
-## {615,34200429} 40.1,39.2,305901,39.2,100,3742,' F  ','N'
-## {615,34201201} 40.1,38.6,309302,38.9,100,3899,' F  ','Y'
-## {615,34201215} 40.1,38.4,309342,38.8,100,3906,'Q   ','P'
-## {615,34201216} 40.1,38.4,309342,38.8,100,3907,' F  ','P'
-```
-
 ## Computing minute bars
 
 The trade data are now organized by symbol, time, and a dummy coordinate that
@@ -213,3 +160,91 @@ cross_join(
 # {1612,571} 69.75,76.9,68,71.1,'CVS'
 ```
 Note! That  570 minutes = 9:30 AM.
+
+
+
+## Computing VWAP for all trades
+
+Let's turn to another common kind of operation, computing volume-weighted
+average price (VWAP). We'll compute it for every instrument across their raw
+trade data in the array tades, and store the result into a new array called
+'VWAP'.
+```
+iquery -naq "
+store(
+  apply(
+    cumulate(
+      apply(trades, pv, price*volume),
+      sum(pv) as numerator,
+      sum(volume) as denominator, ms),
+    vwap, numerator/denominator),
+  VWAP)"
+```
+
+This query runs pretty quickly even on modest hardware. It computes and stores
+vwap on the millisecond data for all instruments. Here is a brief overview of
+each step:
+
+- `apply(trades, pv, price*volume)` adds a new attribute named 'pv' to the trades array that contains price*volume for every symbol and every time.
+- `cumulate(..., sum(pv), sum(volume), ms)` computes the cumulative sum of the 'pv' and 'volume' attibutes running along the 'ms' coordimate axis.
+
+Note that we're composing cumulate with an apply operator. SciDB's query
+execution engine pipelines the data from the apply into the cumulate on an
+as-needed basis. Finally, we divide the two running cumulative sums to get the
+VWAP Remember, this quantity is computed for all the stocks!
+
+
+
+## Inexact time join with last-value imputation
+
+The `last_value_join.sh` script generates an example query that joins trade
+data with quote data. At time points where quote data is not available, the
+last known value is looked up and filled in. This is sometimes called an
+'as.of' join or 'last value carry forward' join.
+
+The syntax is
+```
+./last_value_join.sh  "quote array or expression"  "trade array or expression"
+```
+and the script returns a _query_ which you can then run.
+
+Here is an example that joins trades and quotes for 'BAM'. We use the fact
+that we know the symbol index for BAM is 615 from the last example. It takes
+a short while to generate the query for this example because a few temporary
+arrays that aggregate out the dummy dimension are generated (see the comments
+in the script).
+
+```
+x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)")
+
+# Count the result
+iquery -aq "op_count($x)"
+
+## {i} count
+## {0} 4362
+
+
+# This matches the count of the number of unique time elements for this
+# instrument in the trades array:
+
+iquery -aq "op_count(uniq(sort(cu(project(apply(between(trades,null,615,null,null,615,null), time, string(ms)),time)))))" 
+
+## {i} count
+## {0} 4362
+
+
+# Show just part of the result
+iquery -aq "$x" | head
+
+## {symbol_index,ms} ask_price,bid_price,sequence_number,price,volume,sequence_number,condition,exchange
+## {615,34185171} 41.6,37.8,300537,38.9,91,3309,'  TI','P'
+## {615,34185172} 41.6,37.8,300537,39,100,3310,' FT ','T'
+## {615,34185173} 41.6,37.8,300537,38.8,91,3312,'  TI','T'
+## {615,34185950} 42,37.8,300938,38.8,9,3313,'  TI','T'
+## {615,34200381} 40.1,37,305290,39.8,9761,3695,'O   ','N'
+## {615,34200429} 40.1,39.2,305901,39.2,100,3742,' F  ','N'
+## {615,34201201} 40.1,38.6,309302,38.9,100,3899,' F  ','Y'
+## {615,34201215} 40.1,38.4,309342,38.8,100,3906,'Q   ','P'
+## {615,34201216} 40.1,38.4,309342,38.8,100,3907,' F  ','P'
+```
+
