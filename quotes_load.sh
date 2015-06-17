@@ -37,5 +37,5 @@ store(
                 ask_price, double(substr(a0,44,7)) +
                        double(substr(a0,51,4))/1000,
                 sequence_number, int64(substr(a0,69,16))
-    ), ms, symbol, bid_size, bid_price, ask_size, ask_price, sequence_number),
+    ), ms, exchange, condition, symbol, bid_size, bid_price, ask_size, ask_price, sequence_number),
   quotes_flat)"

@@ -17,6 +17,10 @@
 #    <ask_price:double null, ask_size:int64 null,
 #     bid_price:double null, bid_size:int64 null, sequence_number: int64 null>
 #    [symbol_index=0:*,10,0, ms=0:86399999,86400000,0])
+#
+# If it does not, for example if x has extra dimensions, you should 'aggregate
+# out' those extra dimensions to get the best bid and ask data over those
+# dimensions.
 
 x="$1"   # bigger array
 y="$2"   # smaller array
