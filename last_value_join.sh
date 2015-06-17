@@ -78,25 +78,21 @@ apply(cross_join($q2,build(<b:bool>[i=0:1,2,0],false)),v,
 q4="cast(
       redimension(apply($q3,
                     ask_price, double(null),
-                    ask_size, int64(null),
                     bid_price, double(null),
-                    bid_size, int64(null),
                     sequence_number, int64(null)),
-<ask_price:double null, ask_size:int64 null,bid_price:double null, bid_size:int64 null, sequence_number: int64 null>
+<ask_price:double null, bid_price:double null, sequence_number: int64 null>
         [symbol_index=0:*,1,0,v=0:86399999,86400000,0]),
-<ask_price:double null, ask_size:int64 null,bid_price:double null, bid_size:int64 null, sequence_number: int64 null>
+<ask_price:double null, bid_price:double null, sequence_number: int64 null>
         [symbol_index=0:*,1,0,ms=0:86399999,86400000,0])"
 
 
 # Join the mask with the x array
-fill="project(join(merge($x,$q4) as x, $q4 as y), x.ask_price, x.ask_size, x.bid_price, x.bid_size, x.sequence_number)"
+fill="project(join(merge($x,$q4) as x, $q4 as y), x.ask_price, x.bid_price, x.sequence_number)"
 
 # Impute the missing values with piecewise-constant interpolants over time
 fill="cumulate($fill,
         last_value(ask_price) as ask_price,
-        last_value(ask_size) as ask_size,
         last_value(bid_price) as bid_price,
-        last_value(bid_size) as bid_size,
         last_value(sequence_number) as sequence_number, ms)"
 
 # Finally, join the imputed x with y

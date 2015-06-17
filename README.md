@@ -51,7 +51,7 @@ op_count(
 )"
 
 ## {i} count
-## {0} 4362
+## {0} 6337
 
 iquery -aq "
 op_count(
@@ -59,7 +59,7 @@ op_count(
 )"
 
 ## {i} count
-## {0} 33447
+## {0} 49667
 ```
 
 As expected we see more quotes than trades for this instrument. Note that you can
@@ -74,11 +74,11 @@ iquery -aq "filter(tkr, symbol='BAM')"
 
 iquery -aq "
 op_count(
-   between(trades, 615,0, 615,null)
+   between(trades, null,615,0, null,615,null)
 )"
 
 ## {i} count
-## {0} 4362
+## {0} 6337
 ```
 
 ## Inexact time join with last-value imputation
@@ -98,13 +98,13 @@ Here is an example that joins trades and quotes for 'BAM'. We use the fact
 that we know the symbol index for BAM is 615 from the last example.
 
 ```
-x=$(./last_value_join.sh "between(quotes, 615,0,615,null)" "between(trades, 615,0,615,null)")
+x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)")
 
 # Count the result
 iquery -aq "op_count($x)"
 
 ## {i} count
-## {0} 4362
+## {0} 
 
 
 # Note that it matches the trades array expression count
