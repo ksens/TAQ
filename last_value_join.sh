@@ -12,18 +12,34 @@
 # number of time points as y and the inner-join of x and y along the
 # symbol_index axis.
 #
-# THIS SCRIPT ASSUMES that x has schema
+# THIS SCRIPT ASSUMES that x is a 'quotes' array with schema
 #
-#    <ask_price:double null, ask_size:int64 null,
-#     bid_price:double null, bid_size:int64 null, sequence_number: int64 null>
-#    [symbol_index=0:*,10,0, ms=0:86399999,86400000,0])
+#    <ask_price:double null, bid_price:double null, sequence_number:int64 null>
+#    [symbol_index=0:*,10,0, ms=0:86399999,86400000,0]
 #
 # If it does not, for example if x has extra dimensions, you should 'aggregate
 # out' those extra dimensions to get the best bid and ask data over those
-# dimensions.
+# dimensions. Redimension is often an effective way to do this. Comment the
+# following lines out if your data don't indlude any extra dimesnions other
+# than symbol_index and ms:
+#
+# Redimension the bigger quotes array (first argument)
+x="redimension($1, <ask_price:double null, bid_price:double null, sequence_number:int64 null>[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price)"
 
-x="$1"   # bigger array
-y="$2"   # smaller array
+# Redimension the smaller array
+# get the smaller array's attribute schema:
+smaller=$(echo $2 | sed -e "s/'/\\\\'/g")
+attrs="<$(iquery -aq "show('filter($smaller,true)','afl')" | tail -n 1 | cut -d '<' -f 2 | cut -d '>' -f 1)>"
+y="redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], min(ask_price) as ask_price, max(bid_price) as bid_price)"
+
+# (alternative)
+#x="$1"   # bigger array
+#y="$2"   # smaller array
+
+# Note: if you want to keep the sizes corresponding to the best bid and ask
+# prices too then a bit more work is required. But perhaps the easiest and
+# fastest way to handle that case is to use a user-defined type to represent
+# quotes, see https://github.com/paradigm4/quotes.
 
 # We need this plugin for the last_value aggregate
 iquery -aq "load_library('linear_algebra')" >/dev/null 2>&1
