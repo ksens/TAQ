@@ -108,10 +108,10 @@ iquery -aq "op_count($x)"
 
 
 # Note that it matches the trades array expression count
-iquery -aq "op_count(between_trades(615,0,615,null)"
+iquery -aq "op_count(between_trades(null,615,0, null,615,null)"
 
 ## {i} count
-## {0} 4362
+## {0} 6337
 
 # Show just part of the result
 iquery -aq "$x" | head
