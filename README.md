@@ -197,7 +197,8 @@ VWAP Remember, this quantity is computed for all the stocks!
 
 ## Inexact time join with last-value imputation
 
-The `last_value_join.sh` script generates an example query that joins trade
+The https://github.com/Paradigm4/TAQ/blob/master/last_value_join.sh
+script generates an example query that joins trade
 data with quote data. At time points where quote data is not available, the
 last known value is looked up and filled in. This is sometimes called an
 'as.of' join or 'last value carry forward' join.
