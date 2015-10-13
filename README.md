@@ -129,7 +129,7 @@ the minute intervals.
 Let's pull out one of these minute bar time series for a particuar stock,
 CVS.  We can consult the symbols array to find it's index directly.
 ```
-iquery -aq "filter(apply(trade_symbols,x,regex(symbol, 'CVS')), x=true)"
+iquery -aq "filter(apply(tkr,x,regex(symbol, 'CVS')), x=true)"
 # {i} symbol,x
 # {1612} 'CVS',true
 ```
