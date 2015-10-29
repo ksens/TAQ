@@ -35,7 +35,7 @@ smaller=$(echo $2 | sed -e "s/'/\\\\'/g")
 attrs="<$(iquery -aq "show('filter($smaller,true)','afl')" | tail -n 1 | cut -d '<' -f 2 | cut -d '>' -f 1)>"
 iquery -naq "remove(_y)" >/dev/null 2>&1
 iquery -naq "create TEMP array _y ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]" >/dev/null 2>&1
-iquery -naq "store(redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0]), _y)" >/dev/null 2>&1
+iquery -naq "store(redimension($2, ${attrs}[symbol_index=0:*,10,0, ms=0:86399999,86400000,0], FALSE), _y)" >/dev/null 2>&1
 y="_y"
 
 # (alternative if arrays don't have any extra dimensions)
@@ -86,7 +86,7 @@ q4="cast(
                     ask_price, double(null),
                     bid_price, double(null)),
 <ask_price:double null, bid_price:double null>
-        [symbol_index=0:*,1,0,v=0:86399999,86400000,0]),
+        [symbol_index=0:*,1,0,v=0:86399999,86400000,0], FALSE),
 <ask_price:double null, bid_price:double null>
         [symbol_index=0:*,1,0,ms=0:86399999,86400000,0])"
 
