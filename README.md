@@ -5,7 +5,7 @@ You will need the following plugins to run all the examples here:
 * load_tools (https://github.com/paradigm4/load_tools)
 * cu (https://github.com/paradigm4/chunk_unique)
 * linear_algebra (part of Paradigm4 enterprise plugins, contact Paradigm4)
-* openclose (contact Paradigm4)
+* axial_aggregate (contact Paradigm4)
 
 ## Obtain example data
 
@@ -88,18 +88,18 @@ The trade data are now organized by symbol, time, and a dummy coordinate that
 separates collisions (due to, say exchanges)  in a sparse array.
 
 The following query computes and store one-minute open/high/low/close bars from
-these data. We need some extra aggregates from the openclose plugin:
+these data. We need some extra aggregates from the axial_aggregate plugin:
 load that:
 ```
-iquery -naq "load_library('openclose')"
+iquery -naq "load_library('axial_aggregate')"
 iquery -naq "
 store(
   slice(
-    regrid(trades, 1000, 1, 60000,
-           open(price) as open,
+    regrid(apply(trades, time_price, tuple(ms, price)), 1000, 1, 60000,
+           axial_first(timeprice) as open,
            max(price) as high,
            min(price) as low,
-           close(price) as close),
+           axial_last(timeprice) as close),
   dummy,0),
 minute_bars)"
 ```
