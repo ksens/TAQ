@@ -95,13 +95,21 @@ iquery -naq "load_library('axial_aggregate')"
 iquery -naq "
 store(
   slice(
-    regrid(apply(trades, time_price, tuple(ms, price)), 1000, 1, 60000,
-           axial_first(timeprice) as open,
-           max(price) as high,
-           min(price) as low,
-           axial_last(timeprice) as close),
-  dummy,0),
-minute_bars)"
+    regrid(
+      apply(
+              trades, 
+              timeprice, tuple(ms, price)
+            ), 
+            1000, 1, 60000,
+            axial_first(timeprice) as open,
+            max(price) as high,
+            min(price) as low,
+            axial_last(timeprice) as close
+          ),
+          dummy,0
+        ),
+  minute_bars
+)"
 ```
 
 This query runs in seconds, even on modest desktop machines. It
@@ -109,7 +117,9 @@ produces one-minute bars for _all_ stock trade data at once.
 
 Let's deconstruct the query:
 
-`regrid(trades, 1000, 1, 60000, ...)` applies the open/high/low/close summary
+`apply(trades, timeprice, tuple(ms, price))` creates a tuple using the timestamp `ms` and the price `price` and stores the tuple into a new attribute `timeprice`. Storing data in tuple is required to calculate the open and close values within the minute bars (using `axial_first` and `axial_last` respectively)
+
+`regrid(... , 1000, 1, 60000, ...)` applies the open/high/low/close summary
 statistics over regular rectilinear regions along the coordinate axes.  The
 rectangles have dimension 1000 (dummy) by 1 (symbol) by 60000 milliseconds.
 That means we compute the open/high/low/close price over all sequence numbers
@@ -121,7 +131,7 @@ for each symbol per one minute.
  removes this no longer used axis.
 
 We're left with an array named 'minute_bars' that has two dimensions:
-symbol_index and 60000 ms (that is, minutes). The array is still sparse
+`symbol_index` and 60000 ms (that is, minutes). The array is still sparse
 beause some thinly traded instruments may not have had any trades in some of
 the minute intervals.
 
