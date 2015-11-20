@@ -47,8 +47,8 @@ y="_y"
 # fastest way to handle that case is to use a user-defined type to represent
 # quotes, see https://github.com/paradigm4/quotes.
 
-# We need the `axial_aggregate' plugin for the axial_last aggregate (contact Paradigm4 for this plugin)
-iquery -aq "load_library('axial_aggregate')" >/dev/null 2>&1
+# We need this plugin for the last_value aggregate
+iquery -aq "load_library('linear_algebra')" >/dev/null 2>&1
 
 # time_points is a 1-d strip of all time points present in the y array
 time_points="redimension($y, <count: uint64 null>[ms=0:86399999,86400000,0], count(*) as count)"
@@ -95,14 +95,9 @@ q4="cast(
 fill="project(join(merge($x,$q4) as x, $q4 as y), x.ask_price, x.bid_price)"
 
 # Impute the missing values with piecewise-constant interpolants over time
-fill="cumulate(
-        apply($fill, 
-          time_ask_price, tuple(ms, ask_price),
-          time_bid_price, tuple(ms, bid_price)
-        ),
-        axial_last(time_ask_price) as ask_price,
-        axial_last(time_bid_price) as bid_price, ms
-     )"
+fill="cumulate($fill,
+        last_value(ask_price) as ask_price,
+        last_value(bid_price) as bid_price, ms)"
 
 # Finally, join the imputed x with y
 answer="join($fill as x, $y as y)"
