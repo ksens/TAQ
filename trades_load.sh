@@ -2,7 +2,7 @@
 #
 # SciDB Examples using NYSE TAQ daily trades data
 #
-iquery -aq "load_library('load_tools')"
+iquery -aq "load_library('accelerated_io_tools')"
 
 # We obtain one day of NYSE TAQ trades with (uncomment to download):
 # wget ftp://ftp.nyxdata.com/Historical%20Data%20Samples/Daily%20TAQ/EQY_US_ALL_TRADE_20131218.zip
@@ -27,7 +27,7 @@ zcat EQY_US_ALL_TRADE_20131218.zip |  tail -n +2  > /tmp/pipe &
 iquery  -naq "
 store(
   project(
-    apply(parse( split('/tmp/pipe'), 'num_attributes=1'),
+    apply( aio_input('/tmp/pipe', 'num_attributes=1'),
                 ms, int64(substr(a0,0,2))*60*60000 +
                     int64(substr(a0,2,2))*60000 +
                     int64(substr(a0,4,2))*1000 +

@@ -1,3 +1,7 @@
+# NOTE for different versions of SciDB
+
+The master branch of this repository tracks the latest release of SciDB. To get a version of TAQ repository that worked with SciDB version 15.7 or older, choose the `v15.7` branch.
+
 # Example SciDB queries for trade and quote data
 
 You will need the following plugins to run all the examples here:
