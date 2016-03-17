@@ -3,11 +3,10 @@
 # But it's still organized like the flat file. Let's redimension these data
 # along time and symbol axes. First, let's make an indexed categorical variable
 # for the various stock symbols in the data:
-iquery -naq "load_library('cu')"
 iquery -naq "
 store(
   cast(
-    uniq(sort(cu(project(trades_flat,symbol)))),
+    uniq(sort(project(trades_flat,symbol))),
     <symbol:string> [symbol_index=0:*,1000000,0]),
   tkr)"
 

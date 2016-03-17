@@ -18,7 +18,8 @@ iquery -naq "remove(quotes)" 2>/dev/null
 # interesting fields from the raw data.  We could easily parse more.
 rm -f /tmp/pipe
 mkfifo /tmp/pipe
-zcat EQY_US_ALL_NBBO_20131218.zip |  tail -n +2  > /tmp/pipe &
+#zcat EQY_US_ALL_NBBO_20131218.zip |  tail -n +2  > /tmp/pipe &		# NOTE: The 'head -n 158850027' below is added to avoid an error in the file-ending; should not be necessary otherwise
+zcat EQY_US_ALL_NBBO_20131218.zip | head -n 158850027 | tail -n +2  > /tmp/pipe &
 iquery  -naq "
 store(
   project(

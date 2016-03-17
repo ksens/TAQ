@@ -129,7 +129,7 @@ rectangles have dimension 1000 (dummy) by 1 (symbol) by 60000 milliseconds.
 That means we compute the open/high/low/close price over all sequence numbers
 for each symbol per one minute.
 
-`slice(..., dummy ,0)` removes the dummy (sequence number_ coordinate axis from
+`slice(..., dummy ,0)` removes the dummy sequence number coordinate axis from
  the result. It's no longer needed because all trades for each symbol and
  minute have been accounted for in the regrid aggregate. So slice simply
  removes this no longer used axis.
@@ -170,8 +170,8 @@ cross_join(
 # {1612,565} 70.2,70.2,70.2,70.2,'CVS'
 # {1612,568} 70.2,70.2,70.2,70.2,'CVS'
 # {1612,569} 70.2,72.4,70.2,72.4,'CVS'
-# {1612,570} 68.2,73.7,68.2,72.2,'CVS'
-# {1612,571} 69.75,76.9,68,71.1,'CVS'
+# {1612,570} 68.2,73.7,68.2,70,'CVS'
+# {1612,571} 69.75,76.9,68,75.818,'CVS'
 ```
 Note! That  570 minutes = 9:30 AM.
 
