@@ -300,6 +300,7 @@ iquery -aq "asof(quotes_redim, trades_redim)" | head
 ```
 
 Or to time the asof join (Note that this depends almost entirely on the hardware configuration)
+```
 time iquery -aq "consume(asof(quotes_redim, trades_redim))"
 ```
 
