@@ -211,29 +211,36 @@ VWAP Remember, this quantity is computed for all the stocks!
 
 ## Inexact time join with last-value imputation
 
-The https://github.com/Paradigm4/TAQ/blob/master/last_value_join.sh
-script generates an example query that joins trade
+The example below shows the AFL query that joins trade
 data with quote data. At time points where quote data is not available, the
 last known value is looked up and filled in. This is sometimes called an
 'as.of' join or 'last value carry forward' join.
 
 The syntax is
 ```
-./last_value_join.sh  "quote array or expression"  "trade array or expression"
+iquery -aq "asof(quotes as A, trades as B, A.ms, B.ms)"
 ```
-and the script returns a _query_ which you can then run.
+or if timestamp is the last dimension in the array, simply:
+```
+iquery -aq "asof(quotes, trades)"
+```
 
-Here is an example that joins trades and quotes for 'BAM'. We use the fact
+Note that in the above syntax, it is assumed that there is no dummy / synthetic dimension to handle collisions on the timestamp dimension. The `quotes` and `trades` array used in this example do have a dummy dimension. We provide the following example script to handle this case:
+```
+./prepare_last_value_join.sh  "quote array or expression"  "trade array or expression"
+```
+The script aggregates out the dummy dimension from `quotes` and `trades` arrays and stores the results in `quotes_redim` and `trades_redim` arrays respectively. You can then feed these resultant arrays into the `asof` join.
+
+Here is an example that preps the trades and quotes data for 'BAM'. We use the fact
 that we know the symbol index for BAM is 615 from the last example. It takes
-a short while to generate the query for this example because a few temporary
-arrays that aggregate out the dummy dimension are generated (see the comments
+a short while to generate the temporary arrays that aggregate out the dummy dimension are generated (see the comments
 in the script).
 
 ```
-x=$(./last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)")
+./prepare_for_last_value_join.sh "between(quotes, null,615,0, null,615,null)" "between(trades, null,615,0, null,615,null)"
 
 # Count the result
-iquery -aq "op_count($x)"
+iquery -aq "op_count(asof(quotes_redim, trades_redim))"
 
 ## {i} count
 ## {0} 4362
@@ -242,24 +249,63 @@ iquery -aq "op_count($x)"
 # This matches the count of the number of unique time elements for this
 # instrument in the trades array:
 
-iquery -aq "op_count(uniq(sort(cu(project(apply(between(trades,null,615,null,null,615,null), time, string(ms)),time)))))" 
+iquery -aq "op_count(uniq(sort(project(apply(between(trades,null,615,null,null,615,null), time, string(ms)),time))))" 
 
 ## {i} count
 ## {0} 4362
 
 
 # Show just part of the result
-iquery -aq "$x" | head
+iquery -aq "asof(quotes_redim, trades_redim)" | head
 
-## {symbol_index,ms} ask_price,bid_price,sequence_number,price,volume,sequence_number,condition,exchange
-## {615,34185171} 41.6,37.8,300537,38.9,91,3309,'  TI','P'
-## {615,34185172} 41.6,37.8,300537,39,100,3310,' FT ','T'
-## {615,34185173} 41.6,37.8,300537,38.8,91,3312,'  TI','T'
-## {615,34185950} 42,37.8,300938,38.8,9,3313,'  TI','T'
-## {615,34200381} 40.1,37,305290,39.8,9761,3695,'O   ','N'
-## {615,34200429} 40.1,39.2,305901,39.2,100,3742,' F  ','N'
-## {615,34201201} 40.1,38.6,309302,38.9,100,3899,' F  ','Y'
-## {615,34201215} 40.1,38.4,309342,38.8,100,3906,'Q   ','P'
-## {615,34201216} 40.1,38.4,309342,38.8,100,3907,' F  ','P'
+## {symbol_index,ms} ask_price,bid_price,price,volume,sequence_number,condition,exchange
+## {615,34185171} 41.6,37.8,38.9,91,3309,'  TI','P'
+## {615,34185172} 41.6,37.8,39,100,3310,' FT ','T'
+## {615,34185173} 41.6,37.8,38.8,91,3312,'  TI','T'
+## {615,34185950} 42,37.8,38.8,9,3313,'  TI','T'
+## {615,34200381} 40.1,37,39.8,9761,3695,'O   ','N'
+## {615,34200429} 40.1,39.2,39.2,100,3742,' F  ','N'
+## {615,34201201} 40.1,38.6,38.9,100,3899,' F  ','Y'
+## {615,34201215} 40.1,38.4,38.8,100,3906,'Q   ','P'
+## {615,34201216} 40.1,38.4,38.8,100,3907,' F  ','P'
+```
+
+Now you can also try the asof join on the entire day's data... this will take a little longer. 
+```
+./prepare_for_last_value_join.sh quotes trades
+```
+
+To get an idea of the sizes of the resultant array, let us run some counts
+```
+iquery -aq "op_count(quotes_redim)"
+
+## {i} count
+## {0} 93336911
+
+iquery -aq "op_count(trades_redim)"
+
+## {i} count
+## {0} 22633275
+```
+Then you can run the asof join for the entire day's data using the same syntax as before
+Note that this is a join of 93,336,911 quotes with 22,633,275 trades
+
+```
+iquery -aq "asof(quotes_redim, trades_redim)" | head
+
+## {symbol_index,ms} ask_price,bid_price,price,volume,sequence_number,condition,exchange
+## {0,34200011} 66.5,56.5,61,32051,2325,' O  ','N'
+## {0,34201498} 61,60,60.1,30,2971,'I   ','N'
+## {0,34207432} 60.8,59.7,60.025,100,3782,'@   ','D'
+## {0,34207506} 60.8,59.7,60.1,100,3785,'@   ','B'
+## {0,34210008} 61,59.7,60.8,100,4112,'Q   ','P'
+## {0,34210009} 62,60.1,60.8,200,4114,' F  ','N'
+## {0,34210306} 61,60.3,60.9,100,4168,'Q   ','T'
+## {0,34210307} 61,60.3,60.8,100,4169,' F  ','N'
+## {0,34210610} 61,59.7,60.8,100,4201,' F  ','N'
+```
+
+Or to time the asof join (Note that this depends almost entirely on the hardware configuration)
+time iquery -aq "consume(asof(quotes_redim, trades_redim))"
 ```
 
