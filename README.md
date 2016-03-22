@@ -1,14 +1,8 @@
-# NOTE for different versions of SciDB
-
-The master branch of this repository tracks the latest release of SciDB. To get a version of TAQ repository that worked with SciDB version 15.7 or older, choose the `v15.7` branch.
-
 # Example SciDB queries for trade and quote data
 
 You will need the following plugins to run all the examples here:
 
-* load_tools (https://github.com/paradigm4/load_tools)
-* cu (https://github.com/paradigm4/chunk_unique)
-* linear_algebra (part of Paradigm4 enterprise plugins, contact Paradigm4)
+* accelerated_io_tools (https://github.com/paradigm4/accelerated_io_tools)
 * axial_aggregate (contact Paradigm4)
 
 ## Obtain example data
