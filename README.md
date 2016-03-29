@@ -304,3 +304,37 @@ Or to time the asof join (Note that this depends almost entirely on the hardware
 time iquery -aq "consume(asof(quotes_redim, trades_redim))"
 ```
 
+## Violations of NBBO (Regulation NMS)
+
+Next, let us run some interesting analysis on the result of the `asof` join. We can filter for the trades where the traded price was higher than the lowest ask. 
+
+```
+$ iquery -aq "filter(asof(quotes_redim, trades_redim), price > ask_price)" | head
+{symbol_index,ms} ask_price,bid_price,price,volume,sequence_number,condition,exchange
+{0,34232423} 59.4,60.7,60.9,100,5722,' F  ','P'
+{0,34232424} 59.4,60.7,60.9,100,5724,' F  ','T'
+{0,34240389} 59.4,61.1,61.3,100,6142,' F  ','T'
+{0,34245395} 58.2,61.7,62,100,6324,' F  ','P'
+{0,34246395} 0,61.6,62.2,400,6408,' F  ','N'
+```
+
+A count of such trades, and a count of the total number of trades:
+```
+$ iquery -aq "op_count(filter(asof(quotes_redim, trades_redim), price > ask_price))"
+{i} count
+{0} 1342671
+
+$ iquery -aq "op_count(trades_redim)"
+{i} count
+{0} 22633275
+```
+
+Finally, a timing of running this analysis on all the data (93,336,911 quotes with 22,633,275 trades, run across 7500 tickers):
+```
+$ time iquery -aq "consume(filter(asof(quotes_redim, trades_redim), price > ask_price))"
+Query was executed successfully
+
+real	0m37.394s
+user	0m0.011s
+sys	0m0.003s
+```
