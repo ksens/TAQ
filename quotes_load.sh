@@ -33,10 +33,10 @@ store(
                 symbol, trim(substr(a0,10,16)),
                 bid_size, int64(substr(a0,37,7)),
                 bid_price, double(substr(a0,26,7)) +
-                       double(substr(a0,33,4))/1000,
+                       double(substr(a0,33,4))/10000,
                 ask_size, int64(substr(a0,55,7)),
                 ask_price, double(substr(a0,44,7)) +
-                       double(substr(a0,51,4))/1000,
+                       double(substr(a0,51,4))/10000,
                 sequence_number, int64(substr(a0,69,16))
     ), ms, exchange, condition, symbol, bid_size, bid_price, ask_size, ask_price, sequence_number),
   quotes_flat)"
