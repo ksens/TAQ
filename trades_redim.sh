@@ -35,7 +35,7 @@ store(
   redimension(
     index_lookup(trades_flat as A,tkr, A.symbol, symbol_index),
     <price:double null, volume:int64 null, sequence_number: int64 null, condition:string null, exchange:string null>
-    [dummy=0:999,1000,0, symbol_index=0:*,10,0,  ms=0:86399999,86400000,0]),
+    [symbol_index=0:*,10,0,  tm=0:86399999,86400000,0], false),
   trades
 )" || exit 1
 
