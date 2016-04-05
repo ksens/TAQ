@@ -257,7 +257,7 @@ a.anchor-link {
 
 </div>
 </div>
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -298,7 +298,7 @@ a.anchor-link {
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -326,7 +326,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -455,7 +455,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -523,7 +523,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -637,7 +637,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -741,7 +741,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -809,7 +809,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -820,7 +820,7 @@ First let us set up the connectivity to the database (and also import some usefu
 
 </div>
 </div>
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -934,7 +934,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -959,7 +959,7 @@ First let us set up the connectivity to the database (and also import some usefu
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
@@ -1186,13 +1186,14 @@ gcHMzAr+P+BUUHtuy3HhAAAAAElFTkSuQmCC
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="MVCC">MVCC<a class="anchor-link" href="#MVCC">&#182;</a></h1><p>How does the SciDB-Py library support MVCC</p>
+<h1 id="Synchronous-programming">Synchronous programming<a class="anchor-link" href="#Synchronous-programming">&#182;</a></h1><p>What if you have multiple Python interpreters accessing the database at the same time?</p>
+<p>Unique names for SciDB-Py generated database arrays.</p>
 
 </div>
 </div>
@@ -1225,33 +1226,14 @@ gcHMzAr+P+BUUHtuy3HhAAAAAElFTkSuQmCC
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="AsOf-join">AsOf join<a class="anchor-link" href="#AsOf-join">&#182;</a></h1><p>The <code>asof</code> operator joins trade data with quote data. At time points where quote data is not available, the last known value is looked up and filled in. This is sometimes also called a 'last value carry forward' join or 'piecewise constant interpolation join'.</p>
-<p>The syntax is:</p>
-
-<pre><code>asof(A, B [, aggrDim [, missingCode]])</code></pre>
-<p>where the inputs are:</p>
-<ul>
-<li><code>A &amp; B</code>: two arrays that have the same dimensionality;</li>
-<li><code>aggrDim</code>: the dimension in A along which to find last_value. Default is the last dimension.</li>
-<li><code>missingCode</code>: the missing code to use, when an A record cannot be found. Default is 0.</li>
-</ul>
+<h1 id="AsOf-join">AsOf join<a class="anchor-link" href="#AsOf-join">&#182;</a></h1><p>The <code>asof</code> operator joins trade data with quote data.</p>
 <p>Here is an example that joins trades and quotes for all symbols.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Next we run the <code>asof</code> join and make some simple checks:</p>
 
 </div>
 </div>
@@ -1269,7 +1251,7 @@ gcHMzAr+P+BUUHtuy3HhAAAAAElFTkSuQmCC
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
@@ -1393,15 +1375,15 @@ The head() of the joined array
 </div>
 </div>
 
-</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="RegNMS-(Compliance)">RegNMS (Compliance)<a class="anchor-link" href="#RegNMS-(Compliance)">&#182;</a></h1><p>Smart analytics that can now be run:</p>
+<h1 id="RegNMS-(Compliance)">RegNMS (Compliance)<a class="anchor-link" href="#RegNMS-(Compliance)">&#182;</a></h1><p>Smart analytics can now be run:</p>
 <ul>
-<li>Find the inconsistent quotes</li>
+<li>e.g. find the inconsistent quotes</li>
 </ul>
 
 </div>
