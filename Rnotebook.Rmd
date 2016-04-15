@@ -27,7 +27,7 @@ scidbconnect()
 
 ## Loading data
 
-![](nonparallel-load-2.png)
+![](imgs/nonparallel-load-2.png)
 
 ## Non-parallel load
 
@@ -43,7 +43,7 @@ print(head(data))
 
 ## Parallel load
 
-![](binaryload.png)
+![](imgs/binaryload.png)
 
 ## Parallel load
 
