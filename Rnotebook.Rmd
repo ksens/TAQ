@@ -29,21 +29,21 @@ scidbconnect()
 
 ![](imgs/nonparallel-load-2.png)
 
-## Non-parallel load
+## Parallel load
+
+![](imgs/binaryload.png)
+
+## Serial load
 
 ```{r}
 data = iquery("input(<symbol:string, price:double, volume:int32> 
                         [i=0:*,10,0], 
-                  '/home/scidb/trades_', 
-                  -2, 
+                  'trades_', 
+                  0, 
                   'csv')", 
          return=TRUE)
 print(head(data))
 ```
-
-## Parallel load
-
-![](imgs/binaryload.png)
 
 ## Parallel load
 
@@ -56,8 +56,6 @@ data = iquery("input(<symbol:string, price:double, volume:int32>
          return=TRUE)
 print(head(data))
 ```
-
-## Simple look ups
 
 ```{r, echo=FALSE}
 ticker_index = function(ticker)
@@ -73,10 +71,6 @@ ticker_index = function(ticker)
   }
   ans
 }
-```
-Look up ticker indices:
-```{r}
-ticker_index(c("AAPL", "ABG"))
 ```
 ## Download trades
 
@@ -146,20 +140,43 @@ x = getSeries("20131218", c("AAPL", "ABG"))
 head(x)
 ```
 
-## Three cases
-
-Single ticker:
-```{r, eval=FALSE}
-getSeries("20131218", "AAPL")
+```{r}
+ticker_index("AAPL")
 ```
 
-Random tickers:
+## Elastic compute
+
+- Networked DB
+- Strong consistency
+- Multiple queries (MVCC)
+
+
+![](imgs/pdq.jpg)
+
+##  `foreach` in R
+
 ```{r, eval=FALSE}
-getSeries("20131218", c("AAPL", "QQQ", ...))
+ans = foreach(
+                .inorder=FALSE,
+                .combine=combine,
+                .packages=c("pdq","scidb")
+    ) %dopar% {
+      doAtWorker(TRADE_DATE, TICKER_GROUP)
+    }
 ```
 
-Adjacent tickers:
-```{r, eval=FALSE}
-getSeries("20131218", c("AAON", "AAP", "AAPL"))
-```
+... or any other Parallel programming construct
+
+## Code package
+
+> Trend for new technological adoption
+
+Package containing:
+
+- Common core functions
+- Algorithms / Custom calculations
+- Workflows
+ 
+> Maintenance easier
+
 
